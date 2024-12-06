@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <style>
+        /* General Reset and Layout */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1E1E2F;
+            color: #E0E0E0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            padding: 20px;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        /* Fade-in animation */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Fixed Header Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #2A2A3C;
+            padding: 10px 0;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar a {
+            color: #E0E0E0;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 10px 20px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .navbar a:hover {
+            background-color: #FF4081;
+            color: #1E1E2F;
+            border-radius: 6px;
+        }
+
+        /* To-Do List Container */
+        .container {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            background-color: #2A2A3C;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            margin-top: 60px; /* Adding space for the fixed navbar */
+            animation: slideUp 1s ease-out;
+        }
+
+        /* Slide-up animation */
+        @keyframes slideUp {
+            0% {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #FF4081;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        ul {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        li {
+            background-color: #3B3B3B;
+            color: #E0E0E0;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease;
+        }
+
+        li:hover {
+            background-color: #FF4081;
+            color: #1E1E2F;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 6px;
+            border: 1px solid #3B3B3B;
+            margin-bottom: 20px;
+            background-color: #3B3B3B;
+            color: #E0E0E0;
+            width: 100%;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #FF4081;
+            color: white;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #6200EE;
+        }
+
+        .delete {
+            background-color: transparent;
+            color: #FF4081;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .delete:hover {
+            color: #6200EE;
+        }
+
+        /* Footer styles */
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+        }
+
+        footer a {
+            color: #FF4081;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: #6200EE;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <a href="/grocery">Grocery</a>
+        <a href="/pomodoro">Pomodoro</a>
+        <a href="/bmi_calculator">BMI</a>
+        <a href="/loan_emi_calculator">EMI</a>
+    </div>
+
+    <div class="container">
+        <h1>To-Do List</h1>
+        <input type="text" id="todoInput" placeholder="Enter a new task">
+        <button onclick="addTask()">Add Task</button>
+
+        <ul id="todoList">
+            <!-- Tasks will appear here -->
+        </ul>
+    </div>
+
+    <!-- Footer with Back to Home link -->
+    <footer>
+        <a href="/">Back to Home</a>
+    </footer>
+
+    <script>
+        function addTask() {
+            const input = document.getElementById('todoInput');
+            const taskText = input.value.trim();
+
+            if (taskText === '') {
+                alert('Please enter a task.');
+                return;
+            }
+
+            const taskList = document.getElementById('todoList');
+            const listItem = document.createElement('li');
+
+            listItem.innerHTML = `
+                <span>${taskText}</span>
+                <button class="delete" onclick="deleteTask(this)">X</button>
+            `;
+
+            taskList.appendChild(listItem);
+            input.value = '';
+        }
+
+        function deleteTask(button) {
+            const listItem = button.parentElement;
+            listItem.remove();
+        }
+    </script>
+</body>
+
+</html>

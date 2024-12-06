@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grocery List</title>
+    <style>
+        /* General Reset and Layout */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1E1E2F;
+            color: #E0E0E0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            padding: 20px;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Navbar styling */
+        .navbar {
+            width: 100%;
+            background-color: #2A2A3C;
+            padding: 10px 0;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .navbar a {
+            color: #E0E0E0;
+            text-decoration: none;
+            font-size: 1.2rem;
+            margin: 0 20px;
+            padding: 10px 20px;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+
+        .navbar a:hover {
+            background-color: #FF4081;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            background-color: #2A2A3C;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            transform: scale(1);
+            animation: slideUp 1s ease-out;
+        }
+
+        @keyframes slideUp {
+            0% {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            color: #faf5f6;
+            margin-bottom: 25px;
+            letter-spacing: 2px;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            text-transform: uppercase;
+        }
+
+        label {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            display: block;
+            text-transform: uppercase;
+            color: #E0E0E0;
+        }
+
+        input[type="text"] {
+            padding: 15px;
+            font-size: 1.1rem;
+            border-radius: 6px;
+            border: 1px solid #3B3B3B;
+            margin-bottom: 20px;
+            background-color: #3B3B3B;
+            color: #E0E0E0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 12px 25px;
+            background-color: #FF4081;
+            color: white;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #F50057;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin-top: 20px;
+            font-size: 1.1rem;
+            color: #B0BEC5;
+        }
+
+        li {
+            margin-bottom: 12px;
+            padding: 12px;
+            background-color: #3B3B3B;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        a {
+            color: #FF4081;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #F50057;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #FF4081;
+            text-decoration: none;
+            font-size: 1.2rem;
+        }
+
+        .back-link:hover {
+            color: #F50057;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <a href="/bmi_calculator">BMI Calculator</a>
+        <a href="/pomodoro">Pomodoro</a>
+        <a href="/todo">To-Do</a>
+        <a href="/loan_emi_calculator">EMI</a>
+    </div>
+
+    <div class="container">
+        <h1>Grocery List</h1>
+        <form method="POST" id="add-item-form">
+            <label for="item">Enter Item:</label>
+            <input type="text" name="item" id="item" required>
+            <button type="submit">Add Item</button>
+        </form>
+        <h2>Items</h2>
+        <ul id="grocery-list">
+            {% for item in items %}
+                <li id="item-{{ loop.index0 }}">
+                    {{ item.name }}
+                    <a href="#" onclick="deleteItem({{ loop.index0 }})">Delete</a>
+                </li>
+            {% endfor %}
+        </ul>
+        <a href="/" class="back-link">Back to Home</a>
+    </div>
+
+    <script>
+        // Handle item deletion with AJAX to prevent full page reload
+        function deleteItem(index) {
+            const itemElement = document.getElementById('item-' + index);
+            if (itemElement) {
+                itemElement.remove(); // Remove the item from the list visually
+                // Send an AJAX request to delete the item from the server (Flask backend)
+                fetch(`/delete_item/${index}`, { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log('Item deleted successfully');
+                        } else {
+                            console.log('Error deleting item');
+                        }
+                    });
+            }
+        }
+    
+        // Prevent form from refreshing the page on submit and add the item dynamically
+        document.getElementById('add-item-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const itemName = document.getElementById('item').value;
+            if (itemName) {
+                const ul = document.getElementById('grocery-list');
+                const li = document.createElement('li');
+                const index = ul.children.length;  // Dynamically get index
+                li.id = 'item-' + index;  // Assign dynamic ID to the item
+                li.textContent = itemName;
+                const deleteLink = document.createElement('a');
+                deleteLink.textContent = 'Delete';
+                deleteLink.href = '#';
+                deleteLink.onclick = function() { deleteItem(index); }; // Pass correct index
+                li.appendChild(deleteLink);
+                ul.appendChild(li);
+                document.getElementById('item').value = ''; // Clear input field
+            }
+        });
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan EMI Calculator</title>
+    <style>
+        /* General Reset and Layout */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1E1E2F;
+            color: #E0E0E0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            padding: 20px;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        /* Fade-in animation */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Fixed Header Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #2A2A3C;
+            padding: 10px 0;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar a {
+            color: #E0E0E0;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 10px 20px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .navbar a:hover {
+            background-color: #FF4081;
+            color: #1E1E2F;
+            border-radius: 6px;
+        }
+
+        /* Container for the Loan EMI calculator */
+        .container {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            background-color: #2A2A3C;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            margin-top: 60px; /* Adding space for the fixed navbar */
+            animation: slideUp 1s ease-out;
+        }
+
+        /* Slide-up animation */
+        @keyframes slideUp {
+            0% {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            color: #FF4081;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        label {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            display: block;
+            text-align: left;
+            color: #E0E0E0;
+        }
+
+        input[type="number"] {
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 6px;
+            border: 1px solid #3B3B3B;
+            margin-bottom: 20px;
+            background-color: #3B3B3B;
+            color: #E0E0E0;
+            width: 100%;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #FF4081;
+            color: white;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #6200EE;
+        }
+
+        .result {
+            margin-top: 30px;
+            text-align: left;
+            font-size: 1.2rem;
+        }
+
+        .result p {
+            margin-bottom: 10px;
+        }
+
+        .result strong {
+            color: #FF4081;
+        }
+
+        .error-message {
+            color: #FF4C4C;
+            background-color: #FFEBEB;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 1rem;
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            color: #FF4081;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        .back-link:hover {
+            color: #6200EE;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <a href="/grocery">Grocery</a>
+        <a href="/pomodoro">Pomodoro</a>
+        <a href="/todo">To-Do</a>
+        <a href="/bmi_calculator">BMI</a>
+    </div>
+
+    <!-- Loan EMI Calculator -->
+    <div class="container">
+        <h2>Loan EMI Calculator</h2>
+        <form id="loanForm">
+            <label for="loan_amount">Loan Amount (₹):</label>
+            <input type="number" id="loan_amount" name="loan_amount" step="any" required>
+            <label for="annual_rate">Annual Interest Rate (%):</label>
+            <input type="number" id="annual_rate" name="annual_rate" step="any" required>
+            <label for="tenure_years">Loan Tenure (Years):</label>
+            <input type="number" id="tenure_years" name="tenure_years" required>
+            <button type="submit">Calculate EMI</button>
+        </form>
+
+        <div id="result" class="result" style="display: none;">
+            <p><strong>Calculated EMI:</strong> ₹<span id="emiValue"></span></p>
+        </div>
+
+        <a href="/" class="back-link">Back to Home</a>
+    </div>
+
+    <script>
+        document.getElementById('loanForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const loanAmount = parseFloat(document.getElementById('loan_amount').value);
+            const annualRate = parseFloat(document.getElementById('annual_rate').value);
+            const tenureYears = parseFloat(document.getElementById('tenure_years').value);
+
+            if (isNaN(loanAmount) || isNaN(annualRate) || isNaN(tenureYears) || loanAmount <= 0 || annualRate <= 0 || tenureYears <= 0) {
+                alert("Please enter valid values for loan amount, interest rate, and tenure.");
+                return;
+            }
+
+            const monthlyRate = annualRate / 100 / 12;
+            const tenureMonths = tenureYears * 12;
+
+            const emi = (loanAmount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -tenureMonths));
+
+            document.getElementById('emiValue').textContent = emi.toFixed(2);
+            document.getElementById('result').style.display = 'block';
+        });
+    </script>
+</body>
+</html>

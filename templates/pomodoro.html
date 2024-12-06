@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Timer</title>
+    <style>
+        /* General Reset and Layout */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+    font-family: 'Arial', sans-serif;
+    background-color: #1E1E2F;
+    color: #E0E0E0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Vertically centers the content */
+    align-items: center; /* Horizontally centers the content */
+    height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    background-color: #2A2A3C;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    margin-top: 20px;
+}
+
+
+        /* Navbar Styling */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #2A2A3C;
+            padding: 10px 0;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .navbar a {
+            color: #E0E0E0;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 10px 20px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .navbar a:hover {
+            background-color: #FF4081;
+            color: #1E1E2F;
+            border-radius: 6px;
+        }
+
+        /* Container Styling */
+        .container {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            background-color: #2A2A3C;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            margin-top: 80px; /* Adding space for the fixed navbar */
+            animation: slideUp 1s ease-out;
+        }
+
+        /* Slide-up animation */
+        @keyframes slideUp {
+            0% {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #FF4081;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        #timer-display {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #FF4081;
+        }
+
+        #timer-type {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: #E0E0E0;
+        }
+
+        form {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #FF4081;
+            color: white;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            flex: 1;
+        }
+
+        button:hover {
+            background-color: #6200EE;
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            color: #FF4081;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        .back-link:hover {
+            color: #6200EE;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar Section -->
+    <div class="navbar">
+        <a href="/bmi_calculator">BMI</a>
+        <a href="/grocery">Grocery</a>
+        <a href="/todo">To-Do</a>
+        <a href="/loan_emi_calculator">EMI</a>
+    </div>
+
+   <centre>
+    <!-- Pomodoro Timer Container -->
+    <div class="container">
+        <h1>Pomodoro Timer</h1>
+
+        <!-- Displaying Timer and Timer Type -->
+        <div id="timer-display">{{ timer }}</div>
+        <p id="timer-type">{{ timer_type.capitalize() }} time</p>
+
+        <!-- Form with buttons to control the timer -->
+        <form method="POST" action="{{ url_for('pomodoro') }}">
+            <button type="submit" name="start">Start</button>
+            <button type="submit" name="pause">Pause</button>
+            <button type="submit" name="reset">Reset</button>
+        </form>
+
+        <!-- Back to Home Link -->
+        <a href="/" class="back-link">Back to Home</a>
+    </div>
+    </centre>
+
+    <script>
+        // Ensure correct variable assignment from Flask to JavaScript
+        let timer = {{ timer }}; // Ensure timer is a valid number
+        let timerType = "{{ timer_type }}"; // "work", "break", or "paused"
+        const workDuration = {{ work_duration }}; // Work duration in seconds
+        const breakDuration = {{ break_duration }}; // Break duration in seconds
+        let timerInterval; // Variable to store the interval ID for the timer
+    
+        // Function to format time in MM:SS format
+        function formatTime(seconds) {
+            let minutes = Math.floor(seconds / 60);
+            let remainingSeconds = seconds % 60;
+            return minutes + ':' + (remainingSeconds < 10 ? '0' : '') + remainingSeconds;
+        }
+    
+        // Function to update the timer every second
+        function updateTimer() {
+            if (timerType === 'work') {
+                timer--; // Decrease timer for work time
+            } else if (timerType === 'break') {
+                timer--; // Decrease timer for break time
+            }
+
+            // Update the timer display on each tick
+            document.getElementById('timer-display').textContent = formatTime(timer);
+
+            // When timer reaches 0, switch to the other type (work <-> break)
+            if (timer <= 0) {
+                if (timerType === 'work') {
+                    timer = breakDuration; // Reset timer to break duration
+                    timerType = 'break';
+                } else if (timerType === 'break') {
+                    timer = workDuration; // Reset timer to work duration
+                    timerType = 'work';
+                }
+            }
+        }
+
+        // Start the timer when "start" is clicked
+        document.querySelector('button[name="start"]').addEventListener('click', function(event) {
+            event.preventDefault();
+            if (timerInterval) clearInterval(timerInterval); // Clear any existing interval
+            timerInterval = setInterval(updateTimer, 1000); // Start new interval
+        });
+
+        // Pause the timer when "pause" is clicked
+        document.querySelector('button[name="pause"]').addEventListener('click', function(event) {
+            event.preventDefault();
+            clearInterval(timerInterval); // Stop the timer
+        });
+
+        // Reset the timer when "reset" is clicked
+        document.querySelector('button[name="reset"]').addEventListener('click', function(event) {
+            event.preventDefault();
+            clearInterval(timerInterval); // Stop the timer
+            timer = workDuration; // Reset timer to work duration
+            timerType = 'work'; // Reset timer type to work
+            document.getElementById('timer-display').textContent = formatTime(timer); // Update display
+        });
+    </script>
+</body>
+</html>

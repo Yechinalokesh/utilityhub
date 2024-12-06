@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utility Hub</title>
+
+    <!-- External Fonts and Styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        /* General Reset and Layout */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            color: #E0E0E0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            padding: 0 20px;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 1200px;
+            width: 100%;
+            padding: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        /* Typography and Headings */
+        h1 {
+            font-size: 3rem;
+            font-weight: 600;
+            color: #fdfafb;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            white-space: nowrap;
+            display: inline-block;
+            border-right: 4px solid #FF4081;
+            width: 0;
+            animation: typing 4s steps(30) 1s forwards, cursor-blink 0.75s step-end infinite;
+        }
+
+        /* Animations */
+        @keyframes typing {
+            0% { width: 0; }
+            90% { width: 100%; }
+            100% { width: 100%; border: none; }
+        }
+
+        @keyframes cursor-blink {
+            50% { border-right-color: transparent; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Utility List Styling */
+        .utility-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .utility-item {
+            width: 230px;
+            padding: 20px;
+            background: #3700B3;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease-in-out;
+            opacity: 0;
+            animation: fadeInUp 1s ease-in-out forwards;
+            text-align: center;
+        }
+
+        .utility-item:nth-child(2) { animation-delay: 0.4s; }
+        .utility-item:nth-child(4) { animation-delay: 0.8s; }
+
+        .utility-item:hover {
+            background-color: #6200EE;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            transform: translateY(-5px);
+        }
+
+        .utility-item:active { transform: translateY(2px); }
+
+        .utility-item a {
+            text-decoration: none;
+            color: #BB86FC;
+            font-weight: bold;
+            display: block;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .utility-item i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #FF4081;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .utility-row {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .utility-item {
+                width: 80%;
+                margin: 10px 0;
+            }
+        }
+    </style>
+
+</head>
+<body>
+
+    <div class="container">
+        <h1>Welcome to the Utility Hub....!!!</h1>
+        <p>Select a utility from below:</p>
+
+        <!-- First Row of Utilities -->
+        <div class="utility-row">
+            <div class="utility-item">
+                <i class="fas fa-weight"></i>
+                <a href="/bmi_calculator">BMI Calculator</a>
+            </div>
+            <div class="utility-item">
+                <i class="fas fa-list"></i>
+                <a href="/todo">To-Do List</a>
+            </div>
+        </div>
+
+        <!-- Second Row of Utilities -->
+        <div class="utility-row">
+            <div class="utility-item">
+                <i class="fas fa-calculator"></i>
+                <a href="/loan_emi_calculator">Loan EMI Calculator</a>
+            </div>
+            <div class="utility-item">
+                <i class="fas fa-clock"></i>
+                <a href="/pomodoro">Pomodoro Timer</a>
+            </div>
+            <div class="utility-item">
+                <i class="fas fa-shopping-cart"></i>
+                <a href="/grocery">Grocery Shopping List</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
